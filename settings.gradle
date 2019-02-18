@@ -1,0 +1,1 @@
+include ':Tutorial1-1BLE-Basics', ':Tutorial2-1Connect-GATT-Server', ':Tutorial1-2BluetoothLeScanner', ':External-Tutorial-BLE-Scanner-App', ':External-Tutorial-BluetoothLE-GATT'
