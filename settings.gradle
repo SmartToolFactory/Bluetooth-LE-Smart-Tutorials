@@ -1,1 +1,6 @@
-include ':Tutorial1-1BLE-Basics', ':Tutorial2-1Connect-GATT-Server', ':Tutorial1-2BluetoothLeScanner', ':External-Tutorial-BLE-Scanner-App', ':External-Tutorial-BluetoothLE-GATT', ':External-Tutorial-BluetoohLEAdvertising'
+include ':External-Tutorial-BLE-Scanner-App', ':Tutorial2-1GATTAdvertising', ':External-Tutorial-BluetoothLEAdvertisingTuts', ':External-Tutorial-BluetoothTestbed-Part1'
+include ':External-Tutorial-BLE-Scanner-App-Final'
+include ':External-Tutorial-BluetoothLE-GATT'
+include ':External-Tutorial-BluetoohAdvertisements'
+include ':Tutorial1-1BLE-Basics'
+include ':Tutorial1-2BluetoothLeScanner'

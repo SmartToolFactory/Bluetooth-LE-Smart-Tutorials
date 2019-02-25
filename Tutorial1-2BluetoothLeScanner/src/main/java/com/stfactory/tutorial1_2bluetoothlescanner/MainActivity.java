@@ -7,7 +7,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,7 +35,6 @@ import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends AppCompatActivity {
-
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION = 2;
@@ -70,17 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         mHandler = new Handler();
 
-        // Request for location permission
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_LOCATION);
+        requestLocationPermission();
 
-        // Use this check to determine whether BLE is supported on the device.  Then you can
-        // selectively disable BLE-related features.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        isBluetoothSupported();
 
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
@@ -101,10 +94,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void isBluetoothSupported() {
+        // Use this check to determine whether BLE is supported on the device.  Then you can
+        // selectively disable BLE-related features.
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void requestLocationPermission() {
+        // Request for location permission
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_LOCATION);
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        enableBluetooth();
 
         // Create Filters for Bluetooth states and actions
         IntentFilter intentFilter = new IntentFilter();
@@ -115,6 +126,14 @@ public class MainActivity extends AppCompatActivity {
         // Register BroadcastReceiver for Bluetooth
         registerReceiver(bluetoothStateBroadcastReceiver, intentFilter);
 
+
+    }
+
+    private boolean isBluetoothEnabled() {
+        return mBluetoothAdapter.isEnabled();
+    }
+
+    private void enableBluetooth() {
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
         if (!mBluetoothAdapter.isEnabled()) {
@@ -122,13 +141,13 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothAdapter.enable();
             }
         }
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        scanLeDevice(false);
+//        scanLeDevice(false);
+        scanBTDevice(false);
         deviceList.clear();
         mLeDeviceListAdapter.updateList(deviceList);
 
@@ -137,44 +156,33 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void scanLeDevice(final boolean enable) {
-//        if (enable) {
-//            // Stops scanning after a pre-defined scan period.
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mScanning = false;
-//                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-//                    invalidateOptionsMenu();
-//                }
-//            }, SCAN_PERIOD);
-//
-//            mScanning = true;
-//            mBluetoothAdapter.startLeScan(mLeScanCallback);
-//        } else {
-//            mScanning = false;
-//            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-//        }
 
         if (enable) {
-            // Stops scanning after a pre-defined scan period.
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mScanning = false;
-                    bluetoothLeScanner.startScan(mScanCallback);
-                    invalidateOptionsMenu();
-                }
-            }, SCAN_PERIOD);
 
             mScanning = true;
-            bluetoothLeScanner.startScan(mScanCallback);
+            mBluetoothAdapter.startLeScan(mLeScanCallback);
+
+            stopLeDeviceScanAfterAPeriod();
+
         } else {
             mScanning = false;
-            bluetoothLeScanner.stopScan(mScanCallback);
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
 
 
         invalidateOptionsMenu();
+    }
+
+    private void stopLeDeviceScanAfterAPeriod() {
+        // Stops scanning after a pre-defined scan period.
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mScanning = false;
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                invalidateOptionsMenu();
+            }
+        }, SCAN_PERIOD);
     }
 
 
@@ -185,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
 
-                    System.out.println("DeviceScanActivity onLeScan() device: " + device + ", thread: " + Thread.currentThread().getName());
+                    System.out.println("DeviceScanActivity LeScanCallback onLeScan() device: " + device + ", thread: " + Thread.currentThread().getName());
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -199,12 +207,71 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+
+    /**
+     * Advanced scanning method for Android 21+
+     *
+     * @param enable
+     */
+    private void scanBTDevice(boolean enable) {
+        if (enable) {
+
+
+            mScanning = true;
+
+            starBTScan();
+
+            stopBTDeviceScanAfterAPeriod();
+
+        } else {
+            mScanning = false;
+            bluetoothLeScanner.stopScan(mScanCallback);
+        }
+
+        invalidateOptionsMenu();
+
+    }
+
+    private void starBTScan() {
+
+        List<ScanFilter> scanFilters = new ArrayList<>();
+
+        ScanSettings scanSettings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build();
+
+        bluetoothLeScanner.startScan(scanFilters, scanSettings, mScanCallback);
+    }
+
+    private void stopBTDeviceScanAfterAPeriod() {
+        // Stops scanning after a pre-defined scan period.
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mScanning = false;
+                bluetoothLeScanner.stopScan(mScanCallback);
+                invalidateOptionsMenu();
+            }
+        }, SCAN_PERIOD);
+    }
+
+    /**
+     * ScanCallback for advanced BT LE scan. It requires Android 21+
+     */
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            System.out.println("ScanCallback onScanResult() callbackType: " + callbackType + ", result: " + result);
+            System.out.println("ScanCallback onScanResult() callbackType: " + callbackType + ", result: " + result.getScanRecord());
+
+            BluetoothDevice device = result.getDevice();
+
+            if (device != null && !deviceList.contains(device)) {
+                deviceList.add(device);
+                mLeDeviceListAdapter.updateList(deviceList);
+            }
+
         }
 
         @Override
@@ -254,10 +321,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_scan:
                 deviceList.clear();
                 mLeDeviceListAdapter.updateList(deviceList);
-                scanLeDevice(true);
+//                scanLeDevice(true);
+                scanBTDevice(true);
                 break;
             case R.id.menu_stop:
-                scanLeDevice(false);
+//                scanLeDevice(false);
+                scanBTDevice(false);
                 break;
         }
         return true;

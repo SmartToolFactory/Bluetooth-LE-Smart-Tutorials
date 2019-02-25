@@ -191,11 +191,14 @@ public class DeviceScanActivity extends AppCompatActivity implements DeviceListA
 
     @Override
     public void onItemClicked(View view, int position) {
+
         final BluetoothDevice device = deviceList.get(position);
         if (device == null) return;
+
         final Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             mScanning = false;
