@@ -3,12 +3,7 @@ package com.stfactory.tutorial2_1gattadvertising;
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattServer;
-import android.bluetooth.BluetoothGattServerCallback;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
@@ -31,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
 
-    private static final String UUID = "";
+    private static final String UUID = "CDB7950D-73F1-4D4D-8E47-C090502DBD63";
 
     private UUID SERVICE_UUID = java.util.UUID.fromString(UUID);
 
@@ -42,20 +37,28 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
 
-    private BluetoothGattServer mGattServer;
+    // private BluetoothGattServer mGattServer;
 
 
-    private boolean mAdvertesing;
+    private boolean mAdvertising;
 
     private AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             Log.d(TAG, "Peripheral advertising started.");
+            mAdvertising = true;
+            invalidateOptionsMenu();
+
+            Toast.makeText(MainActivity.this, "Peripheral advertising started." + settingsInEffect, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onStartFailure(int errorCode) {
             Log.d(TAG, "Peripheral advertising failed: " + errorCode);
+            mAdvertising = false;
+            invalidateOptionsMenu();
+
+            Toast.makeText(MainActivity.this, "Periphereal adverising failed: " + errorCode, Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -96,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableBtIntent);
@@ -104,61 +106,67 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-
         mBluetoothLeAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
-        GattServerCallback gattServerCallback = new GattServerCallback();
-        mGattServer = mBluetoothManager.openGattServer(this, gattServerCallback);
-
-        setupServer();
-
 
     }
 
 
-    private void setupServer() {
-        BluetoothGattService service = new BluetoothGattService(SERVICE_UUID,
-                BluetoothGattService.SERVICE_TYPE_PRIMARY);
-        mGattServer.addService(service);
-    }
-
-    // Advertising
-
+    /**
+     * Start advertising data with specified settings. There are 3 components are required for simple advertising.
+     *
+     * <li>
+     *     <b>AdvertiseSettings</b> to set features of advertising such as timout, power level and connectability
+     * </li>
+     *
+     * <li>
+     *     <b>AdvertiseData</b> to be send to clients
+     * </li>
+     *
+     * <li>
+     *     <b>AdvertiseCallback </b> to get events on {@link AdvertiseCallback#onStartFailure(int)}
+     *     or {@link AdvertiseCallback#onStartSuccess(AdvertiseSettings)} events
+     * </li>
+     *
+     */
     private void startAdvertising() {
         if (mBluetoothLeAdvertiser == null) {
             return;
         }
 
-        AdvertiseSettings settings = new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+        // Advertising Settings
+        AdvertiseSettings settings = new AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
                 .setConnectable(true)
                 .setTimeout(0)
                 .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
                 .build();
 
         ParcelUuid parcelUuid = new ParcelUuid(SERVICE_UUID);
-        AdvertiseData data = new AdvertiseData.Builder().setIncludeDeviceName(true)
+
+        // Data to be advertised
+        AdvertiseData data = new AdvertiseData.Builder()
+                .setIncludeDeviceName(true)
                 .addServiceUuid(parcelUuid)
                 .build();
 
+        // Start advertising
         mBluetoothLeAdvertiser.startAdvertising(settings, data, mAdvertiseCallback);
+
     }
 
     private void stopAdvertising() {
         if (mBluetoothLeAdvertiser != null) {
             mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
+            mAdvertising = false;
+            invalidateOptionsMenu();
         }
     }
+
     protected void onPause() {
         super.onPause();
         stopAdvertising();
-        stopServer();
     }
 
-
-    private void stopServer() {
-        if (mGattServer != null) {
-            mGattServer.close();
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (!mAdvertesing) {
+        if (!mAdvertising) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_advertise).setVisible(true);
             menu.findItem(R.id.menu_refresh).setActionView(null);
@@ -190,42 +198,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_advertise:
-
+                startAdvertising();
                 break;
             case R.id.menu_stop:
-
+                stopAdvertising();
                 break;
         }
         return true;
     }
-
-
-    public void addDevice(BluetoothDevice device) {
-//        log("Deviced added: " + device.getAddress());
-//        mHandler.post(() -> mDevices.add(device));
-    }
-
-    public void removeDevice(BluetoothDevice device) {
-//        log("Deviced removed: " + device.getAddress());
-//        mHandler.post(() -> {
-//            mDevices.remove(device);
-//        });
-    }
-
-    // Gatt Callback
-
-    private class GattServerCallback extends BluetoothGattServerCallback {
-        @Override
-        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-            super.onConnectionStateChange(device, status, newState);
-//            log("onConnectionStateChange " + device.getAddress() + "\nstatus " + status + "\nnewState " + newState);
-
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                addDevice(device);
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                removeDevice(device);
-            }
-        }
-    }
-
 }

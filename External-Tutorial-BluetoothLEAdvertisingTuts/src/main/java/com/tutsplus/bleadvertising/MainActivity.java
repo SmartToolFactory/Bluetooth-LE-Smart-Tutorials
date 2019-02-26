@@ -1,5 +1,6 @@
 package com.tutsplus.bleadvertising;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
@@ -13,6 +14,7 @@ import android.bluetooth.le.ScanSettings;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,6 +33,9 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_LOCATION = 2;
+
     private TextView mText;
     private Button mAdvertiseButton;
     private Button mDiscoverButton;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
+
+            Toast.makeText(MainActivity.this, "Scancallback onScanResult: " + result.getDevice(), Toast.LENGTH_SHORT).show();
             if( result == null
                     || result.getDevice() == null
                     || TextUtils.isEmpty(result.getDevice().getName()) )
@@ -70,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Request for location permission
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_LOCATION);
 
         mText = (TextView) findViewById( R.id.text );
         mDiscoverButton = (Button) findViewById( R.id.discover_btn );
@@ -115,14 +127,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             AdvertiseSettings settings = new AdvertiseSettings.Builder()
                     .setAdvertiseMode( AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY )
                     .setTxPowerLevel( AdvertiseSettings.ADVERTISE_TX_POWER_HIGH )
-                    .setConnectable(false)
+                    .setConnectable(true)
                     .build();
 
             ParcelUuid pUuid = new ParcelUuid( UUID.fromString( getString( R.string.ble_uuid ) ) );
 
             AdvertiseData data = new AdvertiseData.Builder()
-                    .setIncludeDeviceName( true )
+                    // If name is send in data it's possible to get error
+                   // .setIncludeDeviceName(true)
                     .addServiceUuid( pUuid )
+                    // TODO This one returns error code 1 which is ADVERTISE_FAILED_DATA_TOO_LARGE
                     .addServiceData( pUuid, "Data".getBytes(Charset.forName("UTF-8") ) )
                     .build();
 
@@ -130,12 +144,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                     super.onStartSuccess(settingsInEffect);
+
+                    Toast.makeText(MainActivity.this, "AdvertiseCallback onStartSuccess() " + settingsInEffect, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onStartFailure(int errorCode) {
                     Log.e( "BLE", "Advertising onStartFailure: " + errorCode );
                     super.onStartFailure(errorCode);
+
+                    Toast.makeText(MainActivity.this, "Advertising onStartFailure: " + errorCode , Toast.LENGTH_SHORT).show();
+
                 }
             };
 

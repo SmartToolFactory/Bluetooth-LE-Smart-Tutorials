@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.stfactory.tutorial1_2bluetoothlescanner.adapter.DeviceListAdapter;
 import com.stfactory.tutorial1_2bluetoothlescanner.broadcast.BluetoothStateBroadcastReceiver;
+import com.stfactory.tutorial1_2bluetoothlescanner.model.CustomBluetoothDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DeviceListAdapter mLeDeviceListAdapter;
 
-    private List<BluetoothDevice> deviceList = new ArrayList<>();
+    private List<BluetoothDevice> bluetoothDeviceList = new ArrayList<>();
+
+    private List<CustomBluetoothDevice> customBluetoothDevices = new ArrayList<>();
 
     private BluetoothStateBroadcastReceiver bluetoothStateBroadcastReceiver = new BluetoothStateBroadcastReceiver();
 
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mLeDeviceListAdapter = new DeviceListAdapter(this, deviceList);
+        mLeDeviceListAdapter = new DeviceListAdapter(this, customBluetoothDevices);
 
         recyclerView.setAdapter(mLeDeviceListAdapter);
 
@@ -148,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
 //        scanLeDevice(false);
         scanBTDevice(false);
-        deviceList.clear();
-        mLeDeviceListAdapter.updateList(deviceList);
+        bluetoothDeviceList.clear();
+        customBluetoothDevices.clear();
+        mLeDeviceListAdapter.updateList(customBluetoothDevices);
 
         unregisterReceiver(bluetoothStateBroadcastReceiver);
     }
@@ -198,9 +202,13 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (!deviceList.contains(device)) {
-                                deviceList.add(device);
-                                mLeDeviceListAdapter.updateList(deviceList);
+
+                            if (!bluetoothDeviceList.contains(device)) {
+                                bluetoothDeviceList.add(device);
+
+                                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, rssi);
+                                customBluetoothDevices.add(customBluetoothDevice);
+                                mLeDeviceListAdapter.updateList(customBluetoothDevices);
                             }
                         }
                     });
@@ -267,9 +275,12 @@ public class MainActivity extends AppCompatActivity {
 
             BluetoothDevice device = result.getDevice();
 
-            if (device != null && !deviceList.contains(device)) {
-                deviceList.add(device);
-                mLeDeviceListAdapter.updateList(deviceList);
+            if (device != null && !bluetoothDeviceList.contains(device)) {
+                bluetoothDeviceList.add(device);
+
+                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, result.getRssi());
+                customBluetoothDevices.add(customBluetoothDevice);
+                mLeDeviceListAdapter.updateList(customBluetoothDevices);
             }
 
         }
@@ -319,8 +330,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_scan:
-                deviceList.clear();
-                mLeDeviceListAdapter.updateList(deviceList);
+                bluetoothDeviceList.clear();
+                customBluetoothDevices.clear();
+                mLeDeviceListAdapter.updateList(customBluetoothDevices);
 //                scanLeDevice(true);
                 scanBTDevice(true);
                 break;

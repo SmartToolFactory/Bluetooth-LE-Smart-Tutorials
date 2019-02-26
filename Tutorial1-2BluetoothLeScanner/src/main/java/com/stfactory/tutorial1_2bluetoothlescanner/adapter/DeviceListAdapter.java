@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.stfactory.tutorial1_2bluetoothlescanner.R;
+import com.stfactory.tutorial1_2bluetoothlescanner.model.CustomBluetoothDevice;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,11 +20,11 @@ public class DeviceListAdapter
         extends RecyclerView.Adapter<DeviceListAdapter.MyViewHolder> {
 
     private LayoutInflater inflater;
-    private List<BluetoothDevice> data = Collections.emptyList();
+    private List<CustomBluetoothDevice> data = Collections.emptyList();
 
     private OnRecyclerViewMeasureClickListener recyclerClickListener;
 
-    public DeviceListAdapter(Context context, List<BluetoothDevice> data) {
+    public DeviceListAdapter(Context context, List<CustomBluetoothDevice> data) {
         inflater = LayoutInflater.from(context);
         this.data = data;
     }
@@ -36,10 +37,16 @@ public class DeviceListAdapter
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
 
-        BluetoothDevice bluetoothDevice = data.get(position);
+        CustomBluetoothDevice customBluetoothDevice = data.get(position);
+
+        BluetoothDevice bluetoothDevice = data.get(position).bluetoothDevice;
+        int rssi = customBluetoothDevice.rssi;
+
 
         holder.tvDeviceName.setText(bluetoothDevice.getName());
         holder.tvDeviceAddress.setText(bluetoothDevice.getAddress());
+        holder.tvDeviceRSSI.setText("RSSI " + rssi);
+
     }
 
     @Override
@@ -62,14 +69,15 @@ public class DeviceListAdapter
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // Views
-        private TextView tvDeviceName, tvDeviceAddress;
+        private TextView tvDeviceName, tvDeviceAddress, tvDeviceRSSI;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-
             tvDeviceName = itemView.findViewById(R.id.device_name);
             tvDeviceAddress = itemView.findViewById(R.id.device_address);
+            tvDeviceRSSI = itemView.findViewById(R.id.device_rssi);
+
             itemView.setOnClickListener(this);
         }
 
@@ -97,12 +105,12 @@ public class DeviceListAdapter
     }
 
 
-    public void updateList(List<BluetoothDevice> deviceList) {
+    public void updateList(List<CustomBluetoothDevice> deviceList) {
         data = deviceList;
         notifyDataSetChanged();
     }
 
-    public void addDevice(BluetoothDevice device) {
+    public void addDevice(CustomBluetoothDevice device) {
         if (data != null && !data.contains(device)) {
             data.add(device);
             notifyDataSetChanged();
