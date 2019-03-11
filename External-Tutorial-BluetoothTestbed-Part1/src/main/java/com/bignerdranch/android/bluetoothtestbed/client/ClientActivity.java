@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bignerdranch.android.bluetoothtestbed.R;
 import com.bignerdranch.android.bluetoothtestbed.databinding.ActivityClientBinding;
@@ -55,6 +56,10 @@ public class ClientActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeScanner mBluetoothLeScanner;
     private ScanCallback mScanCallback;
+
+    /**
+     *  Api for GATT Profile for providing GATT functionality to enable communication
+      */
     private BluetoothGatt mGatt;
 
     // Lifecycle
@@ -66,6 +71,8 @@ public class ClientActivity extends AppCompatActivity {
 
         BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+
+
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_client);
         @SuppressLint("HardwareIds")
@@ -143,6 +150,7 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     private void scanComplete() {
+
         if (mScanResults.isEmpty()) {
             return;
         }
@@ -240,6 +248,8 @@ public class ClientActivity extends AppCompatActivity {
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
+            System.out.println("ScanCallback onScanResult() device: " + result.getDevice());
+
             addScanResult(result);
         }
 
@@ -268,9 +278,14 @@ public class ClientActivity extends AppCompatActivity {
             super.onConnectionStateChange(gatt, status, newState);
             log("onConnectionStateChange newState: " + newState);
 
+            Toast.makeText(ClientActivity.this, "GattClientCallback onConnectionStateChange newState: "
+                    + newState, Toast.LENGTH_SHORT).show();
+
+
             if (status == BluetoothGatt.GATT_FAILURE) {
                 logError("Connection Gatt failure status " + status);
                 disconnectGattServer();
+
                 return;
             } else if (status != BluetoothGatt.GATT_SUCCESS) {
                 // handle anything not SUCCESS as failure
@@ -282,6 +297,7 @@ public class ClientActivity extends AppCompatActivity {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 log("Connected to device " + gatt.getDevice().getAddress());
                 setConnected(true);
+                // TODO Services in GATT should be discovered to invoke onServicesDiscovered() callback method
                 gatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 log("Disconnected from device");

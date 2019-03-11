@@ -6,9 +6,9 @@ public class CustomBluetoothDevice {
 
 
     public BluetoothDevice bluetoothDevice;
-    public int rssi;
+    public String rssi;
 
-    public CustomBluetoothDevice(BluetoothDevice bluetoothDevice, int rssi) {
+    public CustomBluetoothDevice(BluetoothDevice bluetoothDevice, String rssi) {
         this.bluetoothDevice = bluetoothDevice;
         this.rssi = rssi;
     }

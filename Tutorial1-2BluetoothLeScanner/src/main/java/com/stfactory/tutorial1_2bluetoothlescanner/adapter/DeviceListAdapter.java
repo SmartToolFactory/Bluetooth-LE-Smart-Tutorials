@@ -40,7 +40,7 @@ public class DeviceListAdapter
         CustomBluetoothDevice customBluetoothDevice = data.get(position);
 
         BluetoothDevice bluetoothDevice = data.get(position).bluetoothDevice;
-        int rssi = customBluetoothDevice.rssi;
+        String rssi = customBluetoothDevice.rssi;
 
 
         holder.tvDeviceName.setText(bluetoothDevice.getName());

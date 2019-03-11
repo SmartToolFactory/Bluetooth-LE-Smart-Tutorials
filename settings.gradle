@@ -1,6 +1,25 @@
-include ':External-Tutorial-BLE-Scanner-App', ':Tutorial2-1GATT-Advertising', ':External-Tutorial-BluetoothLEAdvertisingTuts', ':External-Tutorial-BluetoothTestbed-Part1', ':External-Tutorial-BluetoothLE-GATT-Server', ':Tutorial2-2GATT-Advertising2'
+include ':External-Tutorial-BLE-Scanner-App'
 include ':External-Tutorial-BLE-Scanner-App-Final'
-include ':External-Tutorial-BluetoothLE-GATT'
 include ':External-Tutorial-BluetoohAdvertisements'
+include ':Bluetooth-LE-library'
+include ':External-Tutorial-Bluetooth-LE-Library-App'
+include ':External-Tutorial-BluetoothLE-GATT'
+include ':External-Tutorial-BluetoothLE-GATT-Server'
+include ':External-Tutorial-BluetoothLEAdvertisingTuts'
+include ':External-Tutorial-BluetoothTestbed-Part1'
+include ':External-Tutorial-BluetoothTestbed-Part2'
+
 include ':Tutorial1-1BLE-Basics'
 include ':Tutorial1-2BluetoothLeScanner'
+include ':Tutorial2-1Advertising'
+include ':Tutorial2-2Advertising-ScanResponseData'
+include ':Tutorial2-3Advertising-AdvertisingSet'
+include ':Tutorial3-1GATT-Peripheral'
+include ':Tutorial3-1GATT-Connect'
+include ':Tutorial3-2GATT-Peripheral-MultipleConnections'
+include ':Tutorial5-1GATT-CentralAndPeripheral'
+
+
+
+
+

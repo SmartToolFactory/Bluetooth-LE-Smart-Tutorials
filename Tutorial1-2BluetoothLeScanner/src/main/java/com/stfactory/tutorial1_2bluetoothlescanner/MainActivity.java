@@ -31,16 +31,24 @@ import com.stfactory.tutorial1_2bluetoothlescanner.adapter.DeviceListAdapter;
 import com.stfactory.tutorial1_2bluetoothlescanner.broadcast.BluetoothStateBroadcastReceiver;
 import com.stfactory.tutorial1_2bluetoothlescanner.model.CustomBluetoothDevice;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends AppCompatActivity {
 
+    public static String SERVICE_STRING = "7D2EA28A-F7BD-485A-BD9D-92AD6ECFE93E";
+    public static UUID SERVICE_UUID = UUID.fromString(SERVICE_STRING);
+
+    public static String CHARACTERISTIC_ECHO_STRING = "7D2EBAAD-F7BD-485A-BD9D-92AD6ECFE93E";
+    public static UUID CHARACTERISTIC_ECHO_UUID = UUID.fromString(CHARACTERISTIC_ECHO_STRING);
+
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION = 2;
     // Stops scanning after 10 seconds.
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 100_000;
 
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
@@ -149,8 +157,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        scanLeDevice(false);
-        scanBTDevice(false);
+        scanLeDevice(false);
+//        scanBTDevice(false);
+
         bluetoothDeviceList.clear();
         customBluetoothDevices.clear();
         mLeDeviceListAdapter.updateList(customBluetoothDevices);
@@ -197,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
 
-                    System.out.println("DeviceScanActivity LeScanCallback onLeScan() device: " + device + ", thread: " + Thread.currentThread().getName());
+
+                    System.out.println("DeviceScanActivity LeScanCallback onLeScan() device: " + device + ", thread: " + Thread.currentThread().getName() + ", record: " + scanRecord);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -206,9 +216,34 @@ public class MainActivity extends AppCompatActivity {
                             if (!bluetoothDeviceList.contains(device)) {
                                 bluetoothDeviceList.add(device);
 
-                                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, rssi);
-                                customBluetoothDevices.add(customBluetoothDevice);
-                                mLeDeviceListAdapter.updateList(customBluetoothDevices);
+                                //   CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, rssi);
+
+                                CustomBluetoothDevice customBluetoothDevice = null;
+                                try {
+                                    customBluetoothDevice = new CustomBluetoothDevice(device, new String(scanRecord, "UTF-8"));
+                                    customBluetoothDevices.add(customBluetoothDevice);
+                                    mLeDeviceListAdapter.updateList(customBluetoothDevices);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+
+                                int index = bluetoothDeviceList.indexOf(device);
+                                bluetoothDeviceList.set(index, device);
+
+                                //     CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, String.valueOf(rssi));
+
+                                CustomBluetoothDevice customBluetoothDevice = null;
+                                try {
+                                    customBluetoothDevice = new CustomBluetoothDevice(device, new String(scanRecord, "UTF-8"));
+                                    customBluetoothDevices.set(index, customBluetoothDevice);
+                                    mLeDeviceListAdapter.updateList(customBluetoothDevices);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
                         }
                     });
@@ -224,10 +259,9 @@ public class MainActivity extends AppCompatActivity {
     private void scanBTDevice(boolean enable) {
         if (enable) {
 
-
             mScanning = true;
 
-            starBTScan();
+            startBTScan();
 
             stopBTDeviceScanAfterAPeriod();
 
@@ -240,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void starBTScan() {
+    private void startBTScan() {
 
         List<ScanFilter> scanFilters = new ArrayList<>();
 
@@ -271,14 +305,14 @@ public class MainActivity extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            System.out.println("ScanCallback onScanResult() callbackType: " + callbackType + ", result: " + result.getScanRecord());
+            System.out.println("ScanCallback onScanResult() callbackType: " + callbackType + ", result: " + result.getScanRecord() + ", data: " + result.getScanRecord().getBytes());
 
             BluetoothDevice device = result.getDevice();
 
             if (device != null && !bluetoothDeviceList.contains(device)) {
                 bluetoothDeviceList.add(device);
 
-                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, result.getRssi());
+                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device, String.valueOf(result.getRssi()));
                 customBluetoothDevices.add(customBluetoothDevice);
                 mLeDeviceListAdapter.updateList(customBluetoothDevices);
             }
@@ -333,16 +367,15 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothDeviceList.clear();
                 customBluetoothDevices.clear();
                 mLeDeviceListAdapter.updateList(customBluetoothDevices);
-//                scanLeDevice(true);
-                scanBTDevice(true);
+                scanLeDevice(true);
+//                scanBTDevice(true);
                 break;
             case R.id.menu_stop:
-//                scanLeDevice(false);
-                scanBTDevice(false);
+                scanLeDevice(false);
+//                scanBTDevice(false);
                 break;
         }
         return true;
     }
-
 
 }

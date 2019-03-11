@@ -41,6 +41,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -121,6 +122,7 @@ public class GattServerActivity extends Activity {
 
     /**
      * Verify the level of Bluetooth support provided by the hardware.
+     *
      * @param bluetoothAdapter System {@link BluetoothAdapter}.
      * @return true if Bluetooth is properly supported, false otherwise.
      */
@@ -265,7 +267,7 @@ public class GattServerActivity extends Activity {
 
         @Override
         public void onStartFailure(int errorCode) {
-            Log.w(TAG, "LE Advertise Failed: "+errorCode);
+            Log.w(TAG, "LE Advertise Failed: " + errorCode);
         }
     };
 
@@ -274,18 +276,26 @@ public class GattServerActivity extends Activity {
      * to the characteristic.
      */
     private void notifyRegisteredDevices(long timestamp, byte adjustReason) {
+
         if (mRegisteredDevices.isEmpty()) {
             Log.i(TAG, "No subscribers registered");
             return;
         }
+
         byte[] exactTime = TimeProfile.getExactTime(timestamp, adjustReason);
 
         Log.i(TAG, "Sending update to " + mRegisteredDevices.size() + " subscribers");
+
         for (BluetoothDevice device : mRegisteredDevices) {
+
             BluetoothGattCharacteristic timeCharacteristic = mBluetoothGattServer
                     .getService(TimeProfile.TIME_SERVICE)
                     .getCharacteristic(TimeProfile.CURRENT_TIME);
             timeCharacteristic.setValue(exactTime);
+
+            showToast("notifyRegisteredDevices() name: " + device.getName() +
+                    ", adrs: " + device.getAddress());
+
             mBluetoothGattServer.notifyCharacteristicChanged(device, timeCharacteristic, false);
         }
     }
@@ -321,6 +331,10 @@ public class GattServerActivity extends Activity {
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
+
+            showToast("onCharacteristicReadRequest() characteristic: " + characteristic.getValue());
+
+
             long now = System.currentTimeMillis();
             if (TimeProfile.CURRENT_TIME.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Read CurrentTime");
@@ -350,6 +364,9 @@ public class GattServerActivity extends Activity {
         @Override
         public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset,
                                             BluetoothGattDescriptor descriptor) {
+
+            showToast("onDescriptorReadRequest() device: " + device.getName());
+
             if (TimeProfile.CLIENT_CONFIG.equals(descriptor.getUuid())) {
                 Log.d(TAG, "Config descriptor read");
                 byte[] returnValue;
@@ -378,6 +395,9 @@ public class GattServerActivity extends Activity {
                                              BluetoothGattDescriptor descriptor,
                                              boolean preparedWrite, boolean responseNeeded,
                                              int offset, byte[] value) {
+
+            showToast("onDescriptorWriteRequest() device: " + device.getName() + ",registered: devices: " + mRegisteredDevices.size());
+
             if (TimeProfile.CLIENT_CONFIG.equals(descriptor.getUuid())) {
                 if (Arrays.equals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE, value)) {
                     Log.d(TAG, "Subscribe device to notifications: " + device);
@@ -394,6 +414,7 @@ public class GattServerActivity extends Activity {
                             0,
                             null);
                 }
+
             } else {
                 Log.w(TAG, "Unknown descriptor write request");
                 if (responseNeeded) {
@@ -406,4 +427,14 @@ public class GattServerActivity extends Activity {
             }
         }
     };
+
+
+    private void showToast(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(GattServerActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

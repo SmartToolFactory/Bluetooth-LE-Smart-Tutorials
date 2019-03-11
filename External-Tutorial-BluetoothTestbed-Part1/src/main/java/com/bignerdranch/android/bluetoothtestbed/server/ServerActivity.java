@@ -22,6 +22,7 @@ import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bignerdranch.android.bluetoothtestbed.R;
 import com.bignerdranch.android.bluetoothtestbed.databinding.ActivityServerBinding;
@@ -42,6 +43,7 @@ public class ServerActivity extends AppCompatActivity {
     private List<BluetoothDevice> mDevices;
 
     private BluetoothGattServer mGattServer;
+
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
@@ -93,6 +95,7 @@ public class ServerActivity extends AppCompatActivity {
         }
 
         mBluetoothLeAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
+
         GattServerCallback gattServerCallback = new GattServerCallback();
         mGattServer = mBluetoothManager.openGattServer(this, gattServerCallback);
 
@@ -114,8 +117,10 @@ public class ServerActivity extends AppCompatActivity {
     // GattServer
 
     private void setupServer() {
+
         BluetoothGattService service = new BluetoothGattService(SERVICE_UUID,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
+
         mGattServer.addService(service);
     }
 
@@ -146,7 +151,8 @@ public class ServerActivity extends AppCompatActivity {
                 .build();
 
         ParcelUuid parcelUuid = new ParcelUuid(SERVICE_UUID);
-        AdvertiseData data = new AdvertiseData.Builder().setIncludeDeviceName(true)
+        AdvertiseData data = new AdvertiseData.Builder()
+                .setIncludeDeviceName(true)
                 .addServiceUuid(parcelUuid)
                 .build();
 
@@ -163,11 +169,16 @@ public class ServerActivity extends AppCompatActivity {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             log("Peripheral advertising started.");
+
+            Toast.makeText(ServerActivity.this, "Peripheral advertising started " + settingsInEffect , Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onStartFailure(int errorCode) {
             log("Peripheral advertising failed: " + errorCode);
+
+            Toast.makeText(ServerActivity.this, "Peripheral advertising failed: " + errorCode , Toast.LENGTH_SHORT).show();
+
         }
     };
 
