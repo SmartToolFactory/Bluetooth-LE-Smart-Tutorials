@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.stfactory.tutorial3_1gatt_peripheral.broadcast.BluetoothStateBroadcastReceiver;
+
 public abstract class BluetoothLEActivity extends AppCompatActivity {
 
     public static final int REQUEST_ENABLE_BT = 1;
@@ -22,6 +25,8 @@ public abstract class BluetoothLEActivity extends AppCompatActivity {
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+
+    private BluetoothStateBroadcastReceiver bluetoothStateBroadcastReceiver = new BluetoothStateBroadcastReceiver();
 
 
     @Override
@@ -54,6 +59,7 @@ public abstract class BluetoothLEActivity extends AppCompatActivity {
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public boolean isMultipleAdvertisementSupported() {
         return mBluetoothAdapter != null && mBluetoothAdapter.isMultipleAdvertisementSupported();
     }
@@ -72,6 +78,11 @@ public abstract class BluetoothLEActivity extends AppCompatActivity {
     }
 
 
+    public boolean isLocationPermissionGranted() {
+        return ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+
     public boolean isBluetoothEnabled() {
         return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
     }
@@ -82,6 +93,11 @@ public abstract class BluetoothLEActivity extends AppCompatActivity {
         if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
             mBluetoothAdapter.enable();
         }
+    }
+
+    public void promptForEnableBluetooth() {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
 
@@ -97,19 +113,38 @@ public abstract class BluetoothLEActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isBluetoothEnabled()) {
-            enableBluetooth();
-        }
+
+        // BroadcastReceiver returns events for enabling and disabling bluetooth and discovering devices
+        // Create Filters for Bluetooth states and actions
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+
+        // Register BroadcastReceiver for Bluetooth
+        registerReceiver(bluetoothStateBroadcastReceiver, intentFilter);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(bluetoothStateBroadcastReceiver);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        Toast.makeText(this, "onRequestPermissionsResult()", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
+            Toast.makeText(this, "onActivityResult() Bluetooth is enabled", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "onActivityResult() Bluetooth request id declined", Toast.LENGTH_SHORT).show();
+        }
     }
 }

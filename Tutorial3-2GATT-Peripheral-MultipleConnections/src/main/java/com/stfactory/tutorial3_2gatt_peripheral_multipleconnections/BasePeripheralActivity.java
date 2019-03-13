@@ -125,8 +125,6 @@ public abstract class BasePeripheralActivity extends BluetoothLEActivity {
 
         final byte[] toSendData = new byte[7];
 
-
-
         toSendData[0] = 6;
         toSendData[1] = 2;
         toSendData[2] = 2;

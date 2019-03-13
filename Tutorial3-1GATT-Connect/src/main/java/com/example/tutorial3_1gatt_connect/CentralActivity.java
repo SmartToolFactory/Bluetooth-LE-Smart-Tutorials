@@ -193,14 +193,21 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
     protected void onResume() {
         super.onResume();
 
-        enableBluetooth();
+        if (!isBluetoothEnabled()) {
+//            enableBluetooth();
+            promptForEnableBluetooth();
+        }
+        
+        if (isBluetoothEnabled()) {
+            bluetoothDeviceList.clear();
+            mDeviceMap.clear();
+            peripheralDeviceItemList.clear();
+            mLeDeviceListAdapter.updateList(peripheralDeviceItemList);
 
-        bluetoothDeviceList.clear();
-        mDeviceMap.clear();
-        peripheralDeviceItemList.clear();
-        mLeDeviceListAdapter.updateList(peripheralDeviceItemList);
-
-        scanBTDevice(true);
+            scanBTDevice(true);
+        } else {
+            Toast.makeText(this, "Bluetooth is NOT enabled!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -238,6 +245,7 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_central, menu);
+
         if (!mScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
@@ -362,11 +370,6 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
 
             // Note: This is not needed for enabling notifications, only example here
 //            characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-
-
-            boolean isNotified = gatt.setCharacteristicNotification(characteristic, true);
-            showToast("onServicesDiscovered() characteristic: " + characteristic + ", isNotified SUCCESS: " + isNotified);
-
 
             boolean isMtuSuccess = gatt.requestMtu(64);
 
@@ -506,6 +509,7 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
 
     @Override
     public void onBLEScanResult(int callbackType, ScanResult result) {
+
 
         //                if (currentDistance < previousDistance) {
 //                    tvBeacon.setText(beaconDevice.getName() + " CLOSING current distance: " + decimalFormat.format(currentDistance));

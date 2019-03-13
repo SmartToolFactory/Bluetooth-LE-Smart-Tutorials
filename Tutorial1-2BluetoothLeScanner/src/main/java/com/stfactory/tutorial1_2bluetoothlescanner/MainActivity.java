@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
         enableBluetooth();
 
+        // BroadcasReceiver returns events for enabling and disabling bluetooth and discovering devices
         // Create Filters for Bluetooth states and actions
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);

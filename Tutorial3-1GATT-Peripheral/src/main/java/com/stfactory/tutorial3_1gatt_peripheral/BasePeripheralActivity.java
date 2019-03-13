@@ -13,6 +13,7 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.stfactory.tutorial3_1gatt_peripheral.constant.Constants;
 
@@ -44,7 +45,9 @@ public abstract class BasePeripheralActivity extends BluetoothLEActivity {
     }
 
     public void startGATTServer(BluetoothGattServerCallback callback) {
+        // TODO !Returns null if bluetooth is NOT enabled
         mBluetoothGattServer = mBluetoothManager.openGattServer(this, callback);
+        System.out.println("BasePeripheralActivity startGATTServer() mBluetoothGattServer: " + mBluetoothGattServer);
     }
 
 

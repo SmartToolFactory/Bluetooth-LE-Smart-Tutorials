@@ -1,0 +1,136 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:1-57:12
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:1-57:12
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:1-57:12
+MERGED from [com.android.support:design:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/8228436dd5779f64479b62dabe82397d/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:recyclerview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/recyclerview-v7-27.1.1.aar/9b8e3e0e9cc95b7d57fd42880a15833c/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:cardview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.1.1.aar/3961d9ec8c246f79c5835f7793dcda23/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:appcompat-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/ba4f60817d8c6402b1154c6837fd164e/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-v4:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-v4-27.1.1.aar/9068fb63cc320255894cd20a93b89ced/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-fragment:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.1.aar/12a1eaa8f8eba4fc0a4c2e03fdd823e0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.1.1.aar/22a818482640f7e9a0d2a265e6ab7a97/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.1.1.aar/f7f1b65682f4940183d1278c26d49dda/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:transition:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/transition-27.1.1.aar/b70f25bdb2ce85977156051814a61971/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/c2af8b789ef2aac861aa9a1566f3bcfb/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.1.1.aar/f0970850209375e22a4ea7ff79a11c52/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-media-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.1.1.aar/d2315cae53413f7804fdb7d00804107b/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/fd1bef44d0c24b193517234468c7fd81/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/ecebb2b979cf55ceef0bfce99fc044b7/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.0.aar/a06734809a038e1deb268b23488d9478/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/3c5bcde43b0352205bdaa5c91b4d4db9/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/6aad0b17a7c4da2ec298754f66562d85/AndroidManifest.xml:17:1-22:12
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:1-57:12
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:1-57:12
+	package
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:19:5-50
+	android:versionName
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:21:5-30
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:18:11-69
+	android:versionCode
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:20:5-28
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+uses-feature#android.hardware.bluetooth_le
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:29:5-31:35
+	android:required
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:31:9-32
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:30:9-53
+uses-permission#android.permission.BLUETOOTH
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:33:5-68
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:33:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:34:5-74
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:34:22-71
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:35:5-79
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:35:22-76
+application
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:37:5-55:19
+	android:label
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:39:9-41
+	android:icon
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:38:9-45
+	android:theme
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:41:9-40
+activity#com.example.android.bluetoothlegatt.DeviceScanActivity
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:42:9-49:20
+	android:label
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:44:13-45
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:43:13-47
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:45:13-48:29
+action#android.intent.action.MAIN
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:46:17-69
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:46:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:47:17-77
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:47:27-74
+activity#com.example.android.bluetoothlegatt.DeviceControlActivity
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:50:9-59
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:50:19-56
+service#com.example.android.bluetoothlegatt.BluetoothLeService
+ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:52:9-54:38
+	android:enabled
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:54:13-35
+	android:name
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml:53:13-47
+uses-sdk
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+MERGED from [com.android.support:design:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/8228436dd5779f64479b62dabe82397d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:design:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/8228436dd5779f64479b62dabe82397d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:recyclerview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/recyclerview-v7-27.1.1.aar/9b8e3e0e9cc95b7d57fd42880a15833c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:recyclerview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/recyclerview-v7-27.1.1.aar/9b8e3e0e9cc95b7d57fd42880a15833c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cardview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.1.1.aar/3961d9ec8c246f79c5835f7793dcda23/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cardview-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.1.1.aar/3961d9ec8c246f79c5835f7793dcda23/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/ba4f60817d8c6402b1154c6837fd164e/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/ba4f60817d8c6402b1154c6837fd164e/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-v4-27.1.1.aar/9068fb63cc320255894cd20a93b89ced/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-v4-27.1.1.aar/9068fb63cc320255894cd20a93b89ced/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.1.aar/12a1eaa8f8eba4fc0a4c2e03fdd823e0/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.1.aar/12a1eaa8f8eba4fc0a4c2e03fdd823e0/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.1.1.aar/22a818482640f7e9a0d2a265e6ab7a97/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.1.1.aar/22a818482640f7e9a0d2a265e6ab7a97/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.1.1.aar/f7f1b65682f4940183d1278c26d49dda/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.1.1.aar/f7f1b65682f4940183d1278c26d49dda/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/transition-27.1.1.aar/b70f25bdb2ce85977156051814a61971/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/transition-27.1.1.aar/b70f25bdb2ce85977156051814a61971/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/c2af8b789ef2aac861aa9a1566f3bcfb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/c2af8b789ef2aac861aa9a1566f3bcfb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.1.1.aar/f0970850209375e22a4ea7ff79a11c52/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.1.1.aar/f0970850209375e22a4ea7ff79a11c52/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.1.1.aar/d2315cae53413f7804fdb7d00804107b/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.1.1.aar/d2315cae53413f7804fdb7d00804107b/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/fd1bef44d0c24b193517234468c7fd81/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.1] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/fd1bef44d0c24b193517234468c7fd81/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/ecebb2b979cf55ceef0bfce99fc044b7/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/ecebb2b979cf55ceef0bfce99fc044b7/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.0.aar/a06734809a038e1deb268b23488d9478/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.0.aar/a06734809a038e1deb268b23488d9478/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/3c5bcde43b0352205bdaa5c91b4d4db9/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/3c5bcde43b0352205bdaa5c91b4d4db9/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/6aad0b17a7c4da2ec298754f66562d85/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] /Users/smarttoolfactory/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/6aad0b17a7c4da2ec298754f66562d85/AndroidManifest.xml:20:5-44
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		ADDED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml
+		INJECTED from /Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/src/main/AndroidManifest.xml

@@ -124,8 +124,12 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
     @Override
     protected void onResume() {
         super.onResume();
-        startServer();
-        startAdvertising();
+        if (isBluetoothEnabled()) {
+            startServer();
+            startAdvertising();
+        } else {
+            enableBluetooth();
+        }
 
     }
 

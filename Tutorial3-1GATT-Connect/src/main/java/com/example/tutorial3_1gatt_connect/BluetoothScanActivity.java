@@ -1,6 +1,5 @@
 package com.example.tutorial3_1gatt_connect;
 
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -12,9 +11,7 @@ import android.os.Handler;
 import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-
-import com.example.tutorial3_1gatt_connect.adapter.DeviceListAdapter;
-import com.example.tutorial3_1gatt_connect.model.PeripheralDeviceItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +30,6 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
     protected boolean mScanning = false;
     private Handler mHandler;
 
-
-
     private BluetoothLeScanner bluetoothLeScanner;
 
     @Override
@@ -48,7 +43,10 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
             requestLocationPermission();
         }
 
+        // !!! Important: Returns NULL if Bluetooth is NOT enabled
         bluetoothLeScanner = getBluetoothAdapter().getBluetoothLeScanner();
+
+        Toast.makeText(this, "BluetoothScanActivity isBluetoothEnabled: " + isBluetoothEnabled() + ", bluetoothLeScanner: " + bluetoothLeScanner, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -60,16 +58,17 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
      */
     public void scanBTDevice(boolean enable) {
         if (enable) {
-
             mScanning = true;
-
             startBTScan();
 
             stopBTDeviceScanAfterAPeriod();
 
         } else {
             mScanning = false;
-            bluetoothLeScanner.stopScan(mScanCallback);
+            if (bluetoothLeScanner != null) {
+                bluetoothLeScanner.stopScan(mScanCallback);
+            }
+
         }
 
         invalidateOptionsMenu();
@@ -115,7 +114,12 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
                 .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
                 .build();
 
+        if (bluetoothLeScanner == null) {
+            bluetoothLeScanner = getBluetoothAdapter().getBluetoothLeScanner();
+        }
+
         bluetoothLeScanner.startScan(scanFilters, scanSettings, mScanCallback);
+
     }
 
     protected void stopBTDeviceScanAfterAPeriod() {
@@ -124,7 +128,9 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
             @Override
             public void run() {
                 mScanning = false;
-                bluetoothLeScanner.stopScan(mScanCallback);
+                if (bluetoothLeScanner != null) {
+                    bluetoothLeScanner.stopScan(mScanCallback);
+                }
                 invalidateOptionsMenu();
             }
         }, SCAN_PERIOD);
@@ -137,9 +143,8 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-
             onBLEScanResult(callbackType, result);
-
+            System.out.println("ScanCallback onScanResult() result: " + result);
         }
 
         @Override
@@ -147,15 +152,14 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
             super.onBatchScanResults(results);
             System.out.println("ScanCallback onBLEBatchScanResults() results: " + results);
             onBLEBatchScanResults(results);
-
         }
 
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
+            mScanning = false;
             System.out.println("ScanCallback onBLEScanFailed() errorCode: " + errorCode);
             onBLEScanFailed(errorCode);
-
         }
     };
 
