@@ -1,4 +1,0 @@
-#Wed Mar 13 00:21:18 EET 2019
-base.0=/Users/smarttoolfactory/ANDROID/ANDROID WORKSPACE/Android Studio/Study Case Codes/Bluetooth/Bluetooth LE/Bluetooth LE Tutorials/External-Tutorial-BluetoothLE-GATT/build/intermediates/transforms/dexMerger/debug/1
-path.0=classes.dex
-renamed.0=classes.dex

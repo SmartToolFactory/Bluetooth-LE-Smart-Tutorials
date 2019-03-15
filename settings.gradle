@@ -1,4 +1,4 @@
-include ':External-Tutorial-BLE-Scanner-App'
+include ':External-Tutorial-BLE-Scanner-App', ':Tutorial6-1BeaconBasics'
 include ':External-Tutorial-BLE-Scanner-App-Final'
 include ':External-Tutorial-BluetoohAdvertisements'
 include ':Bluetooth-LE-library'
