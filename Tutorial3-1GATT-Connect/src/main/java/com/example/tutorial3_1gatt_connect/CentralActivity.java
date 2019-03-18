@@ -38,6 +38,8 @@ import java.util.Map;
 
 import static com.example.tutorial3_1gatt_connect.constant.Constants.CURRENT_TIME;
 import static com.example.tutorial3_1gatt_connect.constant.Constants.TIME_SERVICE;
+import static com.example.tutorial3_1gatt_connect.constant.Constants.nordicUART;
+import static com.example.tutorial3_1gatt_connect.constant.Constants.nordicUARTRX;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CentralActivity extends BluetoothScanActivity implements DeviceListAdapter.OnRecyclerViewClickListener {
@@ -362,7 +364,18 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
             // TODO Enable Notifications
 
             BluetoothGattService service = gatt.getService(TIME_SERVICE);
-            BluetoothGattCharacteristic characteristic = service.getCharacteristic(CURRENT_TIME);
+            BluetoothGattCharacteristic characteristic = null;
+
+            if (service != null) {
+                characteristic = service.getCharacteristic(CURRENT_TIME);
+            } else {
+                service = gatt.getService(nordicUART);
+
+                if (service != null) {
+                    characteristic = service.getCharacteristic(nordicUARTRX);
+                }
+            }
+
 
             // IMPORTANT: Characteristic write type should be with No Response to invoke onCharacteristicWrite immediately.
             // If default type is selected Server should send a response via sendResponse(),
@@ -371,6 +384,13 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
             // Note: This is not needed for enabling notifications, only example here
 //            characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
 
+            // TODO Enable Notifications
+
+            boolean isNotified = gatt.setCharacteristicNotification(characteristic, true);
+            showToast("onServicesDiscovered() characteristic: " + characteristic + ", isNotified SUCCESS: " + isNotified);
+
+
+            // TODO Request MTU
             boolean isMtuSuccess = gatt.requestMtu(64);
 
             showToast("onServicesDiscovered() characteristic: " + characteristic + ", isMtuSuccess SUCCESS: " + isMtuSuccess);
@@ -457,6 +477,8 @@ public class CentralActivity extends BluetoothScanActivity implements DeviceList
 
             showToast("onReadRemoteRssi() rssi: " + rssi + ", status: " + status);
         }
+
+
     }
 
     public void logStatus(String msg) {

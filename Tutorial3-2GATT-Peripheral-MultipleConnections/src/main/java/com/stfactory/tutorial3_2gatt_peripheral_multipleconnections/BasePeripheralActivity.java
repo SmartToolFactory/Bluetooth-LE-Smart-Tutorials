@@ -13,13 +13,13 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.stfactory.tutorial3_2gatt_peripheral_multipleconnections.constant.Constants;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class BasePeripheralActivity extends BluetoothLEActivity {
 
@@ -64,12 +64,10 @@ public abstract class BasePeripheralActivity extends BluetoothLEActivity {
     }
 
     public void addGATTService(BluetoothGattService bluetoothGattService) {
-        List<BluetoothGattService> serviceList = mBluetoothGattServer.getServices();
+        boolean isServiceAdded = mBluetoothGattServer.addService(bluetoothGattService);
 
-        if (!serviceList.contains(bluetoothGattService)) {
-            mBluetoothGattServer.addService(bluetoothGattService);
-        }
-
+        Toast.makeText(this, "BasePeripheralActivity addGATTService() added: " + isServiceAdded
+                + "service: " + bluetoothGattService, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -119,7 +117,6 @@ public abstract class BasePeripheralActivity extends BluetoothLEActivity {
                 .setIncludeTxPowerLevel(true)
                 .addServiceUuid(pUuid)
                 .build();
-
 
         // TODO Test for sending Advertising data
 

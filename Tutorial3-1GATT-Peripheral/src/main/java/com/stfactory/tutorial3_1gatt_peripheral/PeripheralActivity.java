@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseSettings;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import static com.stfactory.tutorial3_1gatt_peripheral.constant.Constants.CLIENT_CONFIG;
 import static com.stfactory.tutorial3_1gatt_peripheral.constant.Constants.CURRENT_TIME;
+import static com.stfactory.tutorial3_1gatt_peripheral.constant.Constants.TIME_SERVICE;
 
 public class PeripheralActivity extends BasePeripheralActivity {
 
@@ -76,7 +78,7 @@ public class PeripheralActivity extends BasePeripheralActivity {
                     // TODO Notifies Central that listens changes on this characteristic
 
                     // Time Service
-                    BluetoothGattService service = mBluetoothGattServer.getService(CURRENT_TIME);
+                    BluetoothGattService service = mBluetoothGattServer.getService(TIME_SERVICE);
                     BluetoothGattCharacteristic characteristic = service.getCharacteristic(Constants.CURRENT_TIME);
                     characteristic.setValue(message);
 
@@ -131,13 +133,15 @@ public class PeripheralActivity extends BasePeripheralActivity {
 
     public static BluetoothGattService createTimeService() {
 
-        BluetoothGattService service = new BluetoothGattService(Constants.TIME_SERVICE,
+        BluetoothGattService service = new BluetoothGattService(TIME_SERVICE,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
 
         // Current Time characteristic
         BluetoothGattCharacteristic currentTime = new BluetoothGattCharacteristic(Constants.CURRENT_TIME,
                 //Read-only characteristic, supports notifications
-                BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE | BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY
+                BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                        | BluetoothGattCharacteristic.PROPERTY_READ
+                        | BluetoothGattCharacteristic.PROPERTY_NOTIFY
                 , BluetoothGattCharacteristic.PERMISSION_WRITE | BluetoothGattCharacteristic.PERMISSION_READ);
 
         BluetoothGattDescriptor configDescriptor = new BluetoothGattDescriptor(Constants.CLIENT_CONFIG,
@@ -163,28 +167,22 @@ public class PeripheralActivity extends BasePeripheralActivity {
             switch (status) {
                 case BluetoothGatt.GATT_SUCCESS:
                     statusString = "GATT_SUCCESS";
-
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_SUCCESS");
                     break;
 
                 case BluetoothGatt.GATT_FAILURE:
                     statusString = "GATT_FAILURE";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_FAILURE");
                     break;
 
                 case BluetoothGatt.GATT_CONNECTION_CONGESTED:
                     statusString = "GATT_CONNECTION_CONGESTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_CONNECTION_CONGESTED");
                     break;
 
                 case BluetoothGatt.GATT_READ_NOT_PERMITTED:
                     statusString = "GATT_READ_NOT_PERMITTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_READ_NOT_PERMITTED");
                     break;
 
                 case BluetoothGatt.GATT_WRITE_NOT_PERMITTED:
                     statusString = "GATT_WRITE_NOT_PERMITTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_WRITE_NOT_PERMITTED");
                     break;
 
                 case BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH:
@@ -228,7 +226,12 @@ public class PeripheralActivity extends BasePeripheralActivity {
             }
 
 
-            logStatus("onConnectionStateChange() newState: " + stateString + ", status: " + statusString + ", registered devices: " + mRegisteredDevices.size());
+
+            logStatus("onConnectionStateChange() newState: " + stateString
+                    + ", status: " + statusString
+                    + ", registered devices: " + mRegisteredDevices.size());
+            showToast("onConnectionStateChange() state: " + stateString + ", status: " + statusString);
+            System.out.println("onConnectionStateChange() state: " + stateString + ", status: " + statusString);
 
             setConnected(mRegisteredDevices.size() > 0);
 
@@ -409,7 +412,31 @@ public class PeripheralActivity extends BasePeripheralActivity {
         Log.d(TAG, "Peripheral advertising failed: " + errorCode);
         setAdvertising(false);
         invalidateOptionsMenu();
-        Toast.makeText(PeripheralActivity.this, "AdvertiseCallback onStartFailure() " + errorCode, Toast.LENGTH_SHORT).show();
+
+        String error = "UNKNOWN";
+
+        switch (errorCode) {
+            case AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE:
+                error = "ADVERTISE_FAILED_DATA_TOO_LARGE";
+                break;
+
+            case AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED:
+                error = "ADVERTISE_FAILED_ALREADY_STARTED";
+                break;
+
+
+            case AdvertiseCallback.ADVERTISE_FAILED_INTERNAL_ERROR:
+                error = "ADVERTISE_FAILED_INTERNAL_ERROR";
+                break;
+
+            case AdvertiseCallback.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS:
+                error = "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS";
+                break;
+        }
+
+        showToast("AdvertiseCallback onStartFailure() " + error);
+
+
     }
 
     @Override

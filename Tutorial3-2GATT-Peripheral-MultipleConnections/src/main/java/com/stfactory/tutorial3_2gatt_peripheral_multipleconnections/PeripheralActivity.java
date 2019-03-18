@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseSettings;
 import android.content.Intent;
 import android.os.Bundle;
@@ -154,12 +155,12 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
         GattServerCallback gattServerCallback = new GattServerCallback();
         startGATTServer(gattServerCallback);
 
+        // TODO Adding 2nd service crashes sometimes on first run and always on second run after paused
+        BluetoothGattService cardService = createCardService();
+        addGATTService(cardService);
+
         BluetoothGattService timeService = createTimeService();
         addGATTService(timeService);
-
-        // TODO Adding 2nd service crashes sometimes on first run and always on second run after paused
-        //        BluetoothGattService cardService = createCardService();
-//        addGATTService(cardService);
     }
 
 
@@ -171,7 +172,9 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
         // Current Time characteristic
         BluetoothGattCharacteristic currentTime = new BluetoothGattCharacteristic(CURRENT_TIME,
                 //Read-only characteristic, supports notifications
-                BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE | BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY
+                BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                        | BluetoothGattCharacteristic.PROPERTY_READ
+                        | BluetoothGattCharacteristic.PROPERTY_NOTIFY
                 , BluetoothGattCharacteristic.PERMISSION_WRITE | BluetoothGattCharacteristic.PERMISSION_READ);
 
         BluetoothGattDescriptor configDescriptor = new BluetoothGattDescriptor(Constants.CLIENT_CONFIG,
@@ -196,19 +199,20 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
                 BluetoothGattCharacteristic.PERMISSION_WRITE);
 
 
-        BluetoothGattDescriptor desc = new BluetoothGattDescriptor(CONFIG_DESCRIPTOR, 1);
-        desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        BluetoothGattDescriptor desc = new BluetoothGattDescriptor(CONFIG_DESCRIPTOR, BluetoothGattCharacteristic.PERMISSION_READ);
 
         nordicTX.addDescriptor(desc);
 
         BluetoothGattCharacteristic nordicRX = new BluetoothGattCharacteristic(nordicUARTRX,
                 //Read-only characteristic
-                BluetoothGattCharacteristic.PROPERTY_WRITE | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE | BluetoothGattCharacteristic.PROPERTY_READ,
+                BluetoothGattCharacteristic.PROPERTY_WRITE
+                        | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                        | BluetoothGattCharacteristic.PROPERTY_READ,
                 BluetoothGattCharacteristic.PERMISSION_WRITE | BluetoothGattCharacteristic.PERMISSION_READ);
 
 
-//        service.addCharacteristic(nordicRX);
-        service.addCharacteristic(nordicTX);
+//        service.addCharacteristic(nordicTX);
+        service.addCharacteristic(nordicRX);
 
         return service;
     }
@@ -231,21 +235,37 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
             // TODO Notifies Central that listens changes on this characteristic
 
             // Time Service
-            mBluetoothGattServer.getServices();
             BluetoothGattService service = mBluetoothGattServer.getService(TIME_SERVICE);
-            BluetoothGattCharacteristic characteristic = service.getCharacteristic(CURRENT_TIME);
-            characteristic.setValue(message);
+            BluetoothGattCharacteristic characteristic = null;
+            boolean isNotified = false;
 
-            // Nordic UART Service
-//                    BluetoothGattService serviceCard = mBluetoothGattServer.getService(nordicUART);
-//                    BluetoothGattCharacteristic characteristicCard = service.getCharacteristic(Constants.nordicUARTTX);
-//                    characteristic.setValue(message);
+            if (service != null) {
+
+                characteristic = service.getCharacteristic(CURRENT_TIME);
+                if (characteristic != null) {
+                    characteristic.setValue(message);
+                    isNotified = mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, true);
+                }
+
+            } else {
+
+                // Nordic UART Service
+                BluetoothGattService serviceCard = mBluetoothGattServer.getService(nordicUART);
+                BluetoothGattCharacteristic characteristicCard = serviceCard.getCharacteristic(Constants.nordicUARTRX);
+                if (serviceCard != null)
+                    if (characteristicCard != null) {
+                        characteristic.setValue(message);
+                        isNotified = mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, true);
+                    }
+
+            }
 
 
-            boolean isNotified = mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, true);
             if (isNotified) {
                 logDataSent(message);
             }
+
+            showToast("notifyDevice() device: " + device.getAddress() + ", isNotified: " + isNotified);
 
 
         } else {
@@ -268,43 +288,29 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
             switch (status) {
                 case BluetoothGatt.GATT_SUCCESS:
                     statusString = "GATT_SUCCESS";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_SUCCESS");
                     break;
 
                 case BluetoothGatt.GATT_FAILURE:
                     statusString = "GATT_FAILURE";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_FAILURE");
                     break;
 
                 case BluetoothGatt.GATT_CONNECTION_CONGESTED:
                     statusString = "GATT_CONNECTION_CONGESTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_CONNECTION_CONGESTED");
                     break;
 
                 case BluetoothGatt.GATT_READ_NOT_PERMITTED:
                     statusString = "GATT_READ_NOT_PERMITTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_READ_NOT_PERMITTED");
                     break;
 
                 case BluetoothGatt.GATT_WRITE_NOT_PERMITTED:
                     statusString = "GATT_WRITE_NOT_PERMITTED";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_WRITE_NOT_PERMITTED");
                     break;
 
                 case BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH:
                     statusString = "GATT_INVALID_ATTRIBUTE_LENGTH";
-                    showToast("onConnectionStateChange() BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH");
                     break;
             }
 
-
-            System.out.println("GattServerCallback onConnectionStateChange() device: " + device);
-
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                System.out.println("GattServerCallback onConnectionStateChange() STATE_CONNECTED device: " + device);
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                System.out.println("GattServerCallback onConnectionStateChange() STATE_DISCONNECTED device: " + device);
-            }
 
 
             // Log Connection State
@@ -313,7 +319,6 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
                 case BluetoothProfile.STATE_CONNECTED:
                     stateString = "STATE_CONNECTED";
                     mRegisteredDevices.add(device);
-                    System.out.println("GattServerCallback onConnectionStateChange() STATE_CONNECTED device: " + device);
                     break;
 
                 case BluetoothProfile.STATE_CONNECTING:
@@ -338,7 +343,11 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
                 }
             });
 
-            logStatus("onConnectionStateChange() newState: " + stateString + ", status: " + statusString + ", registered devices: " + mRegisteredDevices.size());
+            logStatus("onConnectionStateChange() newState: " + stateString
+                    + ", status: " + statusString
+                    + ", registered devices: " + mRegisteredDevices.size());
+            showToast("onConnectionStateChange() state: " + stateString + ", status: " + statusString);
+            System.out.println("onConnectionStateChange() state: " + stateString + ", status: " + statusString);
 
             setConnected(mRegisteredDevices.size() > 0);
 
@@ -524,7 +533,29 @@ public class PeripheralActivity extends BasePeripheralActivity implements Centra
         Log.d(TAG, "Peripheral advertising failed: " + errorCode);
         setAdvertising(false);
         invalidateOptionsMenu();
-        Toast.makeText(PeripheralActivity.this, "AdvertiseCallback onStartFailure() " + errorCode, Toast.LENGTH_SHORT).show();
+
+        String error = "UNKNOWN";
+
+        switch (errorCode) {
+            case AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE:
+                error = "ADVERTISE_FAILED_DATA_TOO_LARGE";
+                break;
+
+            case AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED:
+                error = "ADVERTISE_FAILED_ALREADY_STARTED";
+                break;
+
+
+            case AdvertiseCallback.ADVERTISE_FAILED_INTERNAL_ERROR:
+                error = "ADVERTISE_FAILED_INTERNAL_ERROR";
+                break;
+
+            case AdvertiseCallback.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS:
+                error = "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS";
+                break;
+        }
+
+        showToast("AdvertiseCallback onStartFailure() " + error);
     }
 
     @Override

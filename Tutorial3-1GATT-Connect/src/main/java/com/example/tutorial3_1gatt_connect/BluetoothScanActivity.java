@@ -86,10 +86,6 @@ public abstract class BluetoothScanActivity extends BluetoothLEActivity {
                 .build();
 
 
-        // Estimote Filters
-//        ScanFilter filterEstimotePurple1 = new ScanFilter.Builder()
-//                .setServiceUuid(new ParcelUuid(ESTIMOTE))
-//                .build();
 
         // Filters for ETS
         UUID uuidTicket1 = UUID.fromString("5A412301-A4A1-E192-F1A6-E55A23DAAA6C");

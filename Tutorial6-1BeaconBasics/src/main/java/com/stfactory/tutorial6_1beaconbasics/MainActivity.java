@@ -1,14 +1,20 @@
 package com.stfactory.tutorial6_1beaconbasics;
 
-import android.content.Context;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -20,131 +26,260 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.stfactory.tutorial6_1beaconbasics.adapter.DeviceListAdapter;
+import com.stfactory.tutorial6_1beaconbasics.model.CustomBluetoothDevice;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import uk.co.alt236.bluetoothlelib.device.BluetoothLeDevice;
+import uk.co.alt236.bluetoothlelib.device.beacon.BeaconType;
+import uk.co.alt236.bluetoothlelib.device.beacon.BeaconUtils;
+import uk.co.alt236.bluetoothlelib.device.beacon.ibeacon.IBeaconDevice;
+
+public class MainActivity extends BLEScanActivity {
+
+    private static final String MAC_ESTIMOTE_GREEN = "D7:F7:DD:D4:9C:37";
+    private static final String MAC_ESTIMOTE_BLUE = "DF:AA:AD:47:5E:50";
+    private static final String MAC_ESTIMOTE_PURPLE = "E7:7E:57:AF:C4:A0";
 
     // Views
     private TextView tvVal;
 
-    // Charts
-    private LineChart mLineChart;
     /*
-     * Datasets, Dataset lists and datas for charts
+        List
      */
+    private RecyclerView recyclerView;
+    private DeviceListAdapter mLeDeviceListAdapter;
 
-    // Dataset for first chart
-    private LineDataSet dataSet;
+    private Handler mHandler;
 
-    // Data for chart
-    private LineData data;
+    private List<BluetoothDevice> bluetoothDeviceList = new ArrayList<>();
+    private List<CustomBluetoothDevice> customBluetoothDevices = new ArrayList<>();
 
-    // Sensor manager and sensors
-    private SensorManager mSensorManager;
-    private Sensor accelerometer;
-    private Sensor magneticFieldSensor;
+    private DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-    // Values from accelerometer and magnetic field sensor
-    private final float[] mAccelerometerReading = new float[3];
-    private final float[] mMagnetometerReading = new float[3];
-    // Rotation matrix
-    private final float[] mRotationMatrix = new float[9];
-    private final float[] I = new float[9];
-    // Orientation angles(azimuth, pitch, roll)
-    private final float[] mOrientationAngles = new float[3];
+    // Views
+    private TextView tvVal1X, tvVal1Y, tvVal1Z;
+    private TextView tvVal2X, tvVal2Y, tvVal2Z;
+
+    /*
+     Charts
+      */
+    private LineChart mLineChart1, mLineChart2;
+
+    private int rssi;
+    private int txPower;
+
+    private float[] accuracyRaw = new float[3];
+    private float[] accuracyFiltered = new float[3];
+
+    List<Float> accuracyMeanValueList1 = new ArrayList<>();
+    List<Float> accuracyMeanValueList2 = new ArrayList<>();
+    List<Float> accuracyMeanValueList3 = new ArrayList<>();
+
+    private boolean passPermitted = true;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        // Sensors
-        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mLeDeviceListAdapter = new DeviceListAdapter(this, customBluetoothDevices);
+
+        recyclerView.setAdapter(mLeDeviceListAdapter);
+
+        mHandler = new Handler();
+
+        for (int i = 0; i < 3; i++) {
+
+        }
+
         setViews();
-        setCharts();
+        initCharts();
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do something here if sensor accuracy changes.
-        // You must implement this callback in your code.
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        scanBTDevice(true);
+        passPermitted = true;
 
-        mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(this, magneticFieldSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Don't receive any more updates from either sensor.
-        mSensorManager.unregisterListener(this);
+        scanBTDevice(false);
+
     }
 
-    // Get readings from accelerometer and magnetometer. To simplify
-    // calculations, consider storing these readings as unit vectors.
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            System.arraycopy(event.values, 0, mAccelerometerReading, 0, mAccelerometerReading.length);
-        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            System.arraycopy(event.values, 0, mMagnetometerReading, 0, mMagnetometerReading.length);
+    public void onBLEScanResult(ScanResult result) {
+
+        BluetoothDevice device = result.getDevice();
+
+        final BluetoothLeDevice deviceLe = new BluetoothLeDevice(device, result.getRssi(), result.getScanRecord().getBytes(), System.currentTimeMillis());
+
+        if (BeaconUtils.getBeaconType(deviceLe) == BeaconType.IBEACON) {
+            IBeaconDevice beaconDevice = new IBeaconDevice(deviceLe);
+
+            System.out.println("ScanCallback onScanResult() result: " + result.getScanRecord()
+                    + ", data: " + result.getScanRecord().getBytes());
+
+            int index = 0;
+            float input;
+            float alpha = 0.6f;
+
+            switch (beaconDevice.getAddress()) {
+                case MAC_ESTIMOTE_GREEN:
+                    index = 0;
+
+                    input = (float) beaconDevice.getAccuracy();
+                    // Low-pass Filter
+                    accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
+                    // Mean Average Filter
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+
+                    accuracyRaw[index] = input;
+
+                    addEntry(mLineChart1, index, accuracyRaw[index]);
+                    addEntry(mLineChart2, index, accuracyFiltered[index]);
+
+                    tvVal1X.setText(decimalFormat.format(accuracyRaw[index]));
+                    tvVal2X.setText(decimalFormat.format(accuracyFiltered[index]));
+
+                    break;
+
+                case MAC_ESTIMOTE_BLUE:
+                    index = 1;
+
+                    input = (float) beaconDevice.getAccuracy();
+                    // Low-pass Filter
+                    accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
+                    // Mean Average Filter
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+
+                    accuracyRaw[index] = input;
+
+                    addEntry(mLineChart1, index, accuracyRaw[index]);
+                    addEntry(mLineChart2, index, accuracyFiltered[index]);
+
+                    tvVal1Y.setText(decimalFormat.format(accuracyRaw[index]));
+                    tvVal2Y.setText(decimalFormat.format(accuracyFiltered[index]));
+                    break;
+
+                case MAC_ESTIMOTE_PURPLE:
+                    index = 2;
+                    input = (float) beaconDevice.getAccuracy();
+
+                    accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
+                    // Mean Average Filter
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+
+                    accuracyRaw[index] = input;
+
+                    addEntry(mLineChart1, index, accuracyRaw[index]);
+                    addEntry(mLineChart2, index, accuracyFiltered[index]);
+
+                    tvVal1Z.setText(decimalFormat.format(accuracyRaw[index]));
+                    tvVal2Z.setText(decimalFormat.format(accuracyFiltered[index]));
+                    break;
+            }
+
+            if (passPermitted
+                    && accuracyFiltered[0] < 1
+                    && accuracyFiltered[0] < 1
+                    && accuracyFiltered[2] < 1) {
+
+                passPermitted = false;
+                showToast("Passing...", Toast.LENGTH_SHORT);
+            }
+
+
         }
-        updateOrientationAngles();
-    }
-
-    // Compute the three orientation angles based on the most recent readings
-    // from the device's accelerometer and magnetometer.
-    public void updateOrientationAngles() {
-
-        // Update rotation matrix, which is needed to update orientation angles.
-        SensorManager.getRotationMatrix(mRotationMatrix, I, mAccelerometerReading, mMagnetometerReading);
-
-
-        float[] orientationInDegrees = new float[3];
-
-        orientationInDegrees[0] = (float) (Math.round(((Math.toDegrees(mAccelerometerReading[0]) + 360) % 360) * 10) / 10);
-
-
-        tvVal.setText("Value: " + orientationInDegrees[0]);
-
-
-        addEntry(mLineChart, 0, orientationInDegrees[0]);
 
 
     }
 
+    @Override
+    public void onBLEScanFailed(int errorCode) {
 
-    private void setCharts() {
+        switch (errorCode) {
+            case ScanCallback.SCAN_FAILED_ALREADY_STARTED:
+                scanBTDevice(false);
+                scanBTDevice(true);
+                showToast("ScanCallback onBLEScanFailed() SCAN_FAILED_ALREADY_STARTED: ", Toast.LENGTH_SHORT);
+                break;
+
+            case ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED:
+                showToast("ScanCallback onBLEScanFailed() SCAN_FAILED_APPLICATION_REGISTRATION_FAILED: ", Toast.LENGTH_SHORT);
+
+                break;
+
+            default:
+                showToast("ScanCallback onBLEScanFailed() errorCode: " + errorCode, Toast.LENGTH_SHORT);
+                break;
+
+        }
+
+    }
+
+
+    private void initCharts() {
 
         // set an alternative background color
         // mLineChart1.setBackgroundColor(Color.BLACK);
 
         // get the legend (only possible after setting data)
-        Legend l = mLineChart.getLegend();
+        Legend l = mLineChart1.getLegend();
 
         // modify the legend ...
         l.setForm(LegendForm.LINE);
         // l.setTextColor(Color.WHITE);
 
-        XAxis xl = mLineChart.getXAxis();
+        XAxis xl = mLineChart1.getXAxis();
         // xl.setTextColor(Color.WHITE);
-        xl.setDrawGridLines(true);
+        xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setEnabled(true);
 
-        // Datasets for chart1
-        dataSet = createSet("Azimuth", ColorTemplate.JOYFUL_COLORS[0]);
-        dataSet.addEntry(new Entry(0, 0));
-        data = new LineData(dataSet);
-        mLineChart.setData(data);
-        // TODO Chart description
-        mLineChart.getDescription().setText("Accelerometer+Magnetic Field");
+        // Data sets for first chart
+        LineDataSet datasetVal1X = createSet("GREEN", ColorTemplate.rgb("#4CAF50"));
+        LineDataSet datasetVal1Y = createSet("BLUE", ColorTemplate.rgb("#00E5FF"));
+        LineDataSet datasetVal1Z = createSet("PURPLE", ColorTemplate.rgb("#7E57C2"));
+        datasetVal1X.addEntry(new Entry(0, 0));
+        datasetVal1Y.addEntry(new Entry(0, 0));
+        datasetVal1Z.addEntry(new Entry(0, 0));
+
+        // Data for first chart
+        LineData data1 = new LineData(datasetVal1X, datasetVal1Y, datasetVal1Z);
+        mLineChart1.setData(data1);
+        mLineChart1.getDescription().setText("Raw Beacon");
+
+        // Data sets for second chart
+        LineDataSet datasetVal2X = createSet("GREEN", ColorTemplate.rgb("#4CAF50"));
+        LineDataSet datasetVal2Y = createSet("BLUE", ColorTemplate.rgb("#00E5FF"));
+        LineDataSet datasetVal2Z = createSet("PURPLE", ColorTemplate.rgb("#7E57C2"));
+        datasetVal2X.addEntry(new Entry(0, 0));
+        datasetVal2Y.addEntry(new Entry(0, 0));
+        datasetVal2Z.addEntry(new Entry(0, 0));
+
+        // Data for second chart
+        LineData data2 = new LineData(datasetVal2X, datasetVal2Y, datasetVal2Z);
+        mLineChart2.setData(data2);
+        mLineChart2.getDescription().setText("Filtered Beacon");
+
     }
 
     private void addEntry(LineChart chart, int index, float value) {
@@ -191,8 +326,66 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void setViews() {
-        mLineChart = (LineChart) findViewById(R.id.chart);
-        tvVal = (TextView) findViewById(R.id.tvValue);
+
+        // TextViews for first measurements
+        tvVal1X = (TextView) findViewById(R.id.tvVal1X);
+        tvVal1Y = (TextView) findViewById(R.id.tvVal1Y);
+        tvVal1Z = (TextView) findViewById(R.id.tvVal1Z);
+        // TextViews for second measurements
+        tvVal2X = (TextView) findViewById(R.id.tvVal2X);
+        tvVal2Y = (TextView) findViewById(R.id.tvVal2Y);
+        tvVal2Z = (TextView) findViewById(R.id.tvVal2Z);
+
+        Button buttonReset = findViewById(R.id.buttonReset);
+
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passPermitted = true;
+            }
+        });
+
+        // Charts
+        mLineChart1 = (LineChart) findViewById(R.id.chart1);
+        mLineChart2 = (LineChart) findViewById(R.id.chart2);
+
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        if (!mScanning) {
+            menu.findItem(R.id.menu_stop).setVisible(false);
+            menu.findItem(R.id.menu_scan).setVisible(true);
+            menu.findItem(R.id.menu_refresh).setActionView(null);
+        } else {
+            menu.findItem(R.id.menu_stop).setVisible(true);
+            menu.findItem(R.id.menu_scan).setVisible(false);
+            menu.findItem(R.id.menu_refresh).setActionView(
+                    R.layout.actionbar_indeterminate_progress);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Toast.makeText(this, "SELECTED", Toast.LENGTH_SHORT).show();
+
+        switch (item.getItemId()) {
+            case R.id.menu_scan:
+//                bluetoothDeviceList.clear();
+//                customBluetoothDevices.clear();
+//                mLeDeviceListAdapter.updateList(customBluetoothDevices);
+//                scanBTDevice(true);
+                break;
+            case R.id.menu_stop:
+//                scanBTDevice(false);
+                break;
+        }
+        return true;
+    }
+
 
 }
