@@ -42,10 +42,10 @@ public abstract class BLEScanActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         requestLocationPermission();
 
@@ -157,6 +157,8 @@ public abstract class BLEScanActivity extends AppCompatActivity {
         }
 
         invalidateOptionsMenu();
+
+
 
     }
 

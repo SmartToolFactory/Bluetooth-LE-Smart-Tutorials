@@ -74,18 +74,18 @@ public class MainActivity extends BLEScanActivity {
 
     private float[] accuracyRaw = new float[3];
     private float[] accuracyFiltered = new float[3];
+    List<Float> accuracyMeanValueList = new ArrayList<>();
 
-    List<Float> accuracyMeanValueList1 = new ArrayList<>();
-    List<Float> accuracyMeanValueList2 = new ArrayList<>();
-    List<Float> accuracyMeanValueList3 = new ArrayList<>();
 
-    private boolean passPermitted = true;
-
+    private boolean isCentralReady = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        for (int i = 0; i < 3; i++) {
+            accuracyRaw[i] = accuracyFiltered[i] = 5.0f;
+        }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -100,9 +100,6 @@ public class MainActivity extends BLEScanActivity {
 
         mHandler = new Handler();
 
-        for (int i = 0; i < 3; i++) {
-
-        }
 
         setViews();
         initCharts();
@@ -112,8 +109,19 @@ public class MainActivity extends BLEScanActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        for (int i = 0; i < 3; i++) {
+            accuracyRaw[i] = accuracyFiltered[i] = 5.0f;
+        }
+
         scanBTDevice(true);
-        passPermitted = true;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isCentralReady = true;
+            }
+        },1000);
 
     }
 
@@ -146,10 +154,11 @@ public class MainActivity extends BLEScanActivity {
                     index = 0;
 
                     input = (float) beaconDevice.getAccuracy();
+
                     // Low-pass Filter
                     accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
                     // Mean Average Filter
-                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList, accuracyFiltered[index]);
 
                     accuracyRaw[index] = input;
 
@@ -165,10 +174,11 @@ public class MainActivity extends BLEScanActivity {
                     index = 1;
 
                     input = (float) beaconDevice.getAccuracy();
+
                     // Low-pass Filter
                     accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
                     // Mean Average Filter
-                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList, accuracyFiltered[index]);
 
                     accuracyRaw[index] = input;
 
@@ -183,9 +193,10 @@ public class MainActivity extends BLEScanActivity {
                     index = 2;
                     input = (float) beaconDevice.getAccuracy();
 
+                    // Low-pass Filter
                     accuracyFiltered[index] = SensorFilters.lowPass(input, accuracyRaw[index], alpha);
                     // Mean Average Filter
-                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList1, accuracyFiltered[index]);
+                    accuracyFiltered[index] = SensorFilters.movingAverage(accuracyMeanValueList, accuracyFiltered[index]);
 
                     accuracyRaw[index] = input;
 
@@ -197,19 +208,16 @@ public class MainActivity extends BLEScanActivity {
                     break;
             }
 
-            if (passPermitted
+
+            if (isCentralReady
                     && accuracyFiltered[0] < 1
                     && accuracyFiltered[0] < 1
                     && accuracyFiltered[2] < 1) {
 
-                passPermitted = false;
+                isCentralReady = false;
                 showToast("Passing...", Toast.LENGTH_SHORT);
             }
-
-
         }
-
-
     }
 
     @Override
@@ -234,7 +242,6 @@ public class MainActivity extends BLEScanActivity {
         }
 
     }
-
 
     private void initCharts() {
 
@@ -341,7 +348,7 @@ public class MainActivity extends BLEScanActivity {
         buttonReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                passPermitted = true;
+                isCentralReady = true;
             }
         });
 
